@@ -19,31 +19,24 @@
             </li>
             <li class="menu-item">
               <a href="javascript:;">电视 盒子</a>
-              <div class="children"></div>
             </li>
             <li class="menu-item">
               <a href="javascript:;">笔记本 平板</a>
-              <div class="children"></div>
             </li>
             <li class="menu-item">
               <a href="javascript:;">家电 插线板</a>
-              <div class="children"></div>
             </li>
             <li class="menu-item">
               <a href="javascript:;">出行 穿戴</a>
-              <div class="children"></div>
             </li>
             <li class="menu-item">
               <a href="javascript:;">智能 路由器</a>
-              <div class="children"></div>
             </li>
             <li class="menu-item">
               <a href="javascript:;">电源 配件</a>
-              <div class="children"></div>
             </li>
             <li class="menu-item">
               <a href="javascript:;">生活 箱包</a>
-              <div class="children"></div>
             </li>
           </ul>
         </div>
@@ -97,16 +90,30 @@
       </div>
     </div>
     <service-bar></service-bar>
+    <modal
+      title="提示"
+      sureText="查看购物车"
+      btnType="1"
+      modalType="middle"
+      v-bind:showModal="showModal"
+      v-on:submit="goToCart"
+      v-on:cancel="showModal=false"
+    >
+      <template v-slot:body>
+        <p>商品添加成功！</p>
+      </template>
+    </modal>
   </div>
 </template>
 
 <script>
 import ServiceBar from "./../components/ServiceBar";
+import Modal from "./../components/Modal";
 import { swiper, swiperSlide } from "vue-awesome-swiper";
 import "swiper/dist/css/swiper.css";
 export default {
   name: "index",
-  components: { ServiceBar, swiper, swiperSlide },
+  components: { ServiceBar, swiper, swiperSlide, Modal },
   data() {
     return {
       swiperOption: {
@@ -114,8 +121,6 @@ export default {
         loop: true,
         effect: "cube",
         cubeEffect: {
-          slideShadows: true,
-          shadow: true,
           shadowOffset: 100,
           shadowScale: 0.6
         },
@@ -169,7 +174,8 @@ export default {
         { id: 45, img: "/imgs/ads/ads-3.png" },
         { id: 47, img: "/imgs/ads/ads-4.jpg" }
       ],
-      phoneList: []
+      phoneList: [],
+      showModal: false
     };
   },
   mounted() {
@@ -188,6 +194,20 @@ export default {
           res.list = res.list.slice(6, 14);
           this.phoneList = [res.list.slice(0, 4), res.list.slice(4, 8)];
         });
+    },
+    addCart(id) {
+      this.axios
+        .post("/carts", {
+          productId: id,
+          selected: true
+        })
+        .then(res => {
+          this.showModal = true;
+          this.$store.dispatch("saveCartCount", res.cartTotalQuantity);
+        });
+    },
+    goToCart() {
+      this.$router.push("/cart");
     }
   }
 };
@@ -294,6 +314,7 @@ export default {
       height: 21px;
       line-height: 21px;
       color: $colorB;
+      margin-bottom: 20px;
     }
     .wrapper {
       display: flex;
