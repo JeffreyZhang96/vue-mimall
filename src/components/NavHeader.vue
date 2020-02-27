@@ -4,7 +4,7 @@
       <div class="container">
         <div class="topbar-menu">
           <a href="javascript:;">小米商城</a>
-          <a href="javascript:;">MIUI</a>
+          <a href="javascript:;">MUI</a>
           <a href="javascript:;">云服务</a>
           <a href="javascript:;">协议规则</a>
         </div>
@@ -36,7 +36,7 @@
                       <img v-lazy="item.mainImage" :alt="item.subtitle" />
                     </div>
                     <div class="pro-name">{{item.name}}</div>
-                    <div class="pro-price">{{item.price|currency}}</div>
+                    <div class="pro-price">{{item.price | currency}}</div>
                   </a>
                 </li>
               </ul>
@@ -117,8 +117,8 @@
     </div>
   </div>
 </template>
-
 <script>
+import { mapState } from "vuex";
 export default {
   name: "nav-header",
   data() {
@@ -126,13 +126,26 @@ export default {
       phoneList: []
     };
   },
-  mounted() {
-    this.getProductList();
+  computed: {
+    /*username(){
+        return this.$store.state.username;
+      },
+      cartCount(){
+        return this.$store.state.cartCount;
+      }*/
+    ...mapState(["username", "cartCount"])
   },
   filters: {
     currency(val) {
       if (!val) return "0.00";
       return "￥" + val.toFixed(2) + "元";
+    }
+  },
+  mounted() {
+    this.getProductList();
+    let params = this.$route.params;
+    if (params && params.from == "login") {
+      this.getCartCount();
     }
   },
   methods: {
@@ -170,16 +183,15 @@ export default {
   }
 };
 </script>
-
 <style lang="scss">
-@import "./../assets/scss/config.scss";
 @import "./../assets/scss/base.scss";
 @import "./../assets/scss/mixin.scss";
+@import "./../assets/scss/config.scss";
 .header {
   .nav-topbar {
     height: 39px;
     line-height: 39px;
-    background-color: #333;
+    background-color: #333333;
     color: #b0b0b0;
     .container {
       @include flex();
@@ -190,9 +202,9 @@ export default {
       }
       .my-cart {
         width: 110px;
-        background-color: #f60;
+        background-color: #ff6600;
         text-align: center;
-        color: #fff;
+        color: #ffffff;
         margin-right: 0;
         .icon-cart {
           @include bgImg(16px, 12px, "/imgs/icon-cart-checked.png");
@@ -206,37 +218,13 @@ export default {
       position: relative;
       height: 112px;
       @include flex();
-      .header-logo {
-        display: inline-block;
-        width: 55px;
-        height: 55px;
-        background-color: #f60;
-        a {
-          display: inline-block;
-          width: 110px;
-          height: 55px;
-          &::before {
-            content: "  ";
-            @include bgImg(55px, 55px, "/imgs/mi-logo.png", 55px);
-            transition: margin 0.2s;
-          }
-          &::after {
-            content: " ";
-            @include bgImg(55px, 55px, "/imgs/mi-home.png", 55px);
-          }
-          &:hover::before {
-            margin-left: -55px;
-            transition: margin 0.2s;
-          }
-        }
-      }
       .header-menu {
         display: inline-block;
         width: 643px;
         padding-left: 209px;
         .item-menu {
           display: inline-block;
-          color: #333;
+          color: #333333;
           font-weight: bold;
           font-size: 16px;
           line-height: 112px;
@@ -255,29 +243,29 @@ export default {
             position: absolute;
             top: 112px;
             left: 0;
-            width: 1126px;
-            border-top: 1px solid #e5e5e5;
-            overflow: hidden;
-            box-shadow: 0px 7px 6px 0px rgba(0, 0, 0, 0.11);
-            transition: all 0.5s;
+            width: 1226px;
             height: 0;
             opacity: 0;
+            overflow: hidden;
+            border-top: 1px solid #e5e5e5;
+            box-shadow: 0px 7px 6px 0px rgba(0, 0, 0, 0.11);
             z-index: 10;
-            background-color: #fff;
+            transition: all 0.5s;
+            background-color: #ffffff;
             .product {
+              position: relative;
               float: left;
               width: 16.6%;
               height: 220px;
               font-size: 12px;
               line-height: 12px;
               text-align: center;
-              position: relative;
               a {
                 display: inline-block;
               }
               img {
-                height: 111px;
                 width: auto;
+                height: 111px;
                 margin-top: 26px;
               }
               .pro-img {
@@ -296,7 +284,7 @@ export default {
                 content: " ";
                 position: absolute;
                 top: 28px;
-                right: 0px;
+                right: 0;
                 border-left: 1px solid $colorF;
                 height: 100px;
                 width: 1px;
@@ -324,7 +312,6 @@ export default {
             padding-left: 14px;
           }
           a {
-            display: inline-block;
             @include bgImg(18px, 18px, "/imgs/icon-search.png");
             margin-left: 17px;
           }

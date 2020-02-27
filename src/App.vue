@@ -5,26 +5,29 @@
 </template>
 
 <script>
-// import storage from "./storage";
-
 export default {
-  name: "App",
+  name: "app",
   components: {},
   data() {
-    return {
-      res: {}
-    };
+    return {};
   },
   mounted() {
-    // 本地加载请求静态json的形式
-    // this.axios.get("/mock/user/login.json").then(res => {
-    //   this.res = res;
-    // });
-
-    // 本地集成mockjs实现数据mock
-    this.axios.get("/user/login").then(res => {
-      this.res = res;
-    });
+    if (this.$cookie.get("userId")) {
+      this.getUser();
+      this.getCartCount();
+    }
+  },
+  methods: {
+    getUser() {
+      this.axios.get("/user").then((res = {}) => {
+        this.$store.dispatch("saveUserName", res.username);
+      });
+    },
+    getCartCount() {
+      this.axios.get("/carts/products/sum").then((res = 0) => {
+        this.$store.dispatch("saveCartCount", res);
+      });
+    }
   }
 };
 </script>
@@ -34,4 +37,3 @@ export default {
 @import "./assets/scss/config.scss";
 @import "./assets/scss/button.scss";
 </style>
-

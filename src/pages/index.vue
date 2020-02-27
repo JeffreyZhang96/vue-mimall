@@ -7,11 +7,11 @@
             <li class="menu-item">
               <a href="javascript:;">手机 电话卡</a>
               <div class="children">
-                <ul v-for="(item,i) in menuList" :key="i">
-                  <li v-for="(sub,j) in item" :key="j">
-                    <a :href="sub?'/#/product/'+sub.id:''">
-                      <img :src="sub?sub.img:'/imgs/item-box-1.png'" alt />
-                      {{sub?sub.name:"小米9"}}
+                <ul v-for="(item,i) in menuList" v-bind:key="i">
+                  <li v-for="(sub,j) in item" v-bind:key="j">
+                    <a v-bind:href="sub?'/#/product/'+sub.id:''">
+                      <img v-bind:src="sub?sub.img:'/imgs/item-box-1.png'" alt />
+                      {{sub?sub.name:'小米9'}}
                     </a>
                   </li>
                 </ul>
@@ -40,19 +40,20 @@
             </li>
           </ul>
         </div>
-        <swiper :options="swiperOption">
-          <swiper-slide v-for="(item,index) in slideList" :key="index">
-            <a :href="'/#/product/'+item.id">
-              <img :src="item.img" alt />
+        <swiper v-bind:options="swiperOption">
+          <swiper-slide v-for="(item,index) in slideList" v-bind:key="index">
+            <a v-bind:href="'/#/product/'+item.id">
+              <img v-bind:src="item.img" />
             </a>
           </swiper-slide>
+          <!-- Optional controls -->
           <div class="swiper-pagination" slot="pagination"></div>
           <div class="swiper-button-prev" slot="button-prev"></div>
           <div class="swiper-button-next" slot="button-next"></div>
         </swiper>
       </div>
       <div class="ads-box">
-        <a :href="'/#/product/'+item.id" v-for="(item,i) in adsList" :key="i">
+        <a v-bind:href="'/#/product/'+item.id" v-for="(item,index) in adsList" v-bind:key="index">
           <img v-lazy="item.img" alt />
         </a>
       </div>
@@ -67,21 +68,21 @@
         <h2>手机</h2>
         <div class="wrapper">
           <div class="banner-left">
-            <a href>
+            <a href="/#/product/35">
               <img v-lazy="'/imgs/mix-alpha.jpg'" alt />
             </a>
           </div>
           <div class="list-box">
-            <div class="list" v-for="(arr,index) in phoneList" :key="index">
-              <div class="item" v-for="(item,j) in arr" :key="j">
-                <span :class="{'new-pro':j%2==0}">新品</span>
+            <div class="list" v-for="(arr,i) in phoneList" v-bind:key="i">
+              <div class="item" v-for="(item,j) in arr" v-bind:key="j">
+                <span v-bind:class="{'new-pro':j%2==0}">新品</span>
                 <div class="item-img">
                   <img v-lazy="item.mainImage" alt />
                 </div>
                 <div class="item-info">
                   <h3>{{item.name}}</h3>
                   <p>{{item.subtitle}}</p>
-                  <p class="price">{{item.price}}元</p>
+                  <p class="price" @click="addCart(item.id)">{{item.price}}元</p>
                 </div>
               </div>
             </div>
@@ -105,7 +106,6 @@
     </modal>
   </div>
 </template>
-
 <script>
 import ServiceBar from "./../components/ServiceBar";
 import Modal from "./../components/Modal";
@@ -113,7 +113,12 @@ import { swiper, swiperSlide } from "vue-awesome-swiper";
 import "swiper/dist/css/swiper.css";
 export default {
   name: "index",
-  components: { ServiceBar, swiper, swiperSlide, Modal },
+  components: {
+    swiper,
+    swiperSlide,
+    ServiceBar,
+    Modal
+  },
   data() {
     return {
       swiperOption: {
@@ -147,20 +152,36 @@ export default {
           img: "/imgs/slider/slide-3.jpg"
         },
         {
-          id: "47",
+          id: "",
           img: "/imgs/slider/slide-4.jpg"
         },
         {
-          id: "48",
-          img: "/imgs/slider/slide-5.jpg"
+          id: "",
+          img: "/imgs/slider/slide-1.jpg"
         }
       ],
       menuList: [
         [
-          { id: 30, img: "/imgs/item-box-1.png", name: "小米CC9" },
-          { id: 31, img: "/imgs/item-box-2.png", name: "小米8 青春版" },
-          { id: 32, img: "/imgs/item-box-3.jpg", name: "Redmi K20 Pro" },
-          { id: 33, img: "/imgs/item-box-4.jpg", name: "移动4G+专区" }
+          {
+            id: 30,
+            img: "/imgs/item-box-1.png",
+            name: "小米CC9"
+          },
+          {
+            id: 31,
+            img: "/imgs/item-box-2.png",
+            name: "小米8青春版"
+          },
+          {
+            id: 32,
+            img: "/imgs/item-box-3.jpg",
+            name: "Redmi K20 Pro"
+          },
+          {
+            id: 33,
+            img: "/imgs/item-box-4.jpg",
+            name: "移动4G专区"
+          }
         ],
         [0, 0, 0, 0],
         [0, 0, 0, 0],
@@ -169,10 +190,22 @@ export default {
         [0, 0, 0, 0]
       ],
       adsList: [
-        { id: 33, img: "/imgs/ads/ads-1.png" },
-        { id: 48, img: "/imgs/ads/ads-2.jpg" },
-        { id: 45, img: "/imgs/ads/ads-3.png" },
-        { id: 47, img: "/imgs/ads/ads-4.jpg" }
+        {
+          id: 33,
+          img: "/imgs/ads/ads-1.png"
+        },
+        {
+          id: 48,
+          img: "/imgs/ads/ads-2.jpg"
+        },
+        {
+          id: 45,
+          img: "/imgs/ads/ads-3.png"
+        },
+        {
+          id: 47,
+          img: "/imgs/ads/ads-4.jpg"
+        }
       ],
       phoneList: [],
       showModal: false
@@ -213,8 +246,8 @@ export default {
 };
 </script>
 <style lang="scss">
-@import "../assets/scss/config.scss";
-@import "../assets/scss/mixin.scss";
+@import "./../assets/scss/config.scss";
+@import "./../assets/scss/mixin.scss";
 .index {
   .swiper-box {
     .nav-menu {
@@ -223,7 +256,7 @@ export default {
       height: 451px;
       z-index: 9;
       padding: 26px 0;
-      background-color: rgba(85, 88, 90, 0.7);
+      background-color: #55585a7a;
       box-sizing: border-box;
       .menu-wrap {
         .menu-item {
@@ -233,7 +266,7 @@ export default {
             position: relative;
             display: block;
             font-size: 16px;
-            color: #fff;
+            color: #ffffff;
             padding-left: 30px;
             &:after {
               position: absolute;
@@ -318,7 +351,6 @@ export default {
     }
     .wrapper {
       display: flex;
-      margin-top: 10px;
       .banner-left {
         margin-right: 16px;
         img {
@@ -355,8 +387,8 @@ export default {
             }
             .item-img {
               img {
-                height: 195px;
                 width: 100%;
+                height: 195px;
               }
             }
             .item-info {
