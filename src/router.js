@@ -6,6 +6,8 @@ import Index from "./pages/index.vue";
 import Product from "./pages/product.vue";
 import Order from "./pages/order.vue";
 import Detail from "./pages/detail.vue";
+import Cart from "./pages/cart.vue";
+import Login from "./pages/login.vue";
 import OrderList from "./pages/orderList.vue";
 import OrderConfirm from "./pages/orderConfirm.vue";
 
@@ -27,13 +29,23 @@ export default new Router({
           path: "/product/:id",
           name: "product",
           component: Product
+        },
+        {
+          path: "/detail/:id",
+          name: "detail",
+          component: Detail
         }
       ]
     },
     {
-      path: "/detail/:id",
-      name: "detail",
-      component: Detail
+      path: "/login",
+      name: "login",
+      component: Login
+    },
+    {
+      path: "/cart",
+      name: "cart",
+      component: Cart
     },
     {
       path: "/order",

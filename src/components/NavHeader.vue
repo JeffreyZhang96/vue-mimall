@@ -9,10 +9,13 @@
           <a href="javascript:;">协议规则</a>
         </div>
         <div class="topbar-user">
-          <a href="javascript:;">登录</a>
-          <a href="javascript:;">注册</a>
-          <a href="javascript:;" class="my-cart">
-            <span class="icon-cart"></span>购物车
+          <a href="javascript:;" v-if="username">{{username}}</a>
+          <a href="javascript:;" v-if="!username" @click="login">登录</a>
+          <a href="javascript:;" v-if="username" @click="logout">退出</a>
+          <a href="/#/order/list" v-if="username">我的订单</a>
+          <a href="javascript:;" class="my-cart" @click="goToCart">
+            <span class="icon-cart"></span>
+            购物车({{cartCount}})
           </a>
         </div>
       </div>
@@ -28,9 +31,9 @@
             <div class="children">
               <ul>
                 <li class="product" v-for="(item,index) in phoneList" :key="index">
-                  <a v-bind:href="'/#/product'+item.id" target="_blank">
+                  <a v-bind:href="'/#/product/'+item.id" target="_blank">
                     <div class="pro-img">
-                      <img :src="item.mainImage" :alt="item.subtitle" />
+                      <img v-lazy="item.mainImage" :alt="item.subtitle" />
                     </div>
                     <div class="pro-name">{{item.name}}</div>
                     <div class="pro-price">{{item.price|currency}}</div>
@@ -41,7 +44,6 @@
           </div>
           <div class="item-menu">
             <span>RedMi红米</span>
-            <div class="children"></div>
           </div>
           <div class="item-menu">
             <span>电视</span>
@@ -50,10 +52,55 @@
                 <li class="product">
                   <a href target="_blank">
                     <div class="pro-img">
-                      <img src="/imgs/nav-img/nav-3-1.jpg" alt />
+                      <img v-lazy="'/imgs/nav-img/nav-3-1.jpg'" alt />
                     </div>
-                    <div class="pro-name">小米CC9</div>
+                    <div class="pro-name">小米壁画电视 65英寸</div>
+                    <div class="pro-price">6999元</div>
+                  </a>
+                </li>
+                <li class="product">
+                  <a href target="_blank">
+                    <div class="pro-img">
+                      <img v-lazy="'/imgs/nav-img/nav-3-2.jpg'" alt />
+                    </div>
+                    <div class="pro-name">小米全面屏电视E55A</div>
+                    <div class="pro-price">1999元</div>
+                  </a>
+                </li>
+                <li class="product">
+                  <a href target="_blank">
+                    <div class="pro-img">
+                      <img v-lazy="'/imgs/nav-img/nav-3-3.png'" alt />
+                    </div>
+                    <div class="pro-name">小米电视4A 32英寸</div>
+                    <div class="pro-price">699元</div>
+                  </a>
+                </li>
+                <li class="product">
+                  <a href target="_blank">
+                    <div class="pro-img">
+                      <img v-lazy="'/imgs/nav-img/nav-3-4.jpg'" alt />
+                    </div>
+                    <div class="pro-name">小米电视4A 55英寸</div>
                     <div class="pro-price">1799元</div>
+                  </a>
+                </li>
+                <li class="product">
+                  <a href target="_blank">
+                    <div class="pro-img">
+                      <img v-lazy="'/imgs/nav-img/nav-3-5.jpg'" alt />
+                    </div>
+                    <div class="pro-name">小米电视4A 65英寸</div>
+                    <div class="pro-price">2699元</div>
+                  </a>
+                </li>
+                <li class="product">
+                  <a href target="_blank">
+                    <div class="pro-img">
+                      <img v-lazy="'/imgs/nav-img/nav-3-6.png'" alt />
+                    </div>
+                    <div class="pro-name">查看全部</div>
+                    <div class="pro-price">查看全部</div>
                   </a>
                 </li>
               </ul>
@@ -76,7 +123,6 @@ export default {
   name: "nav-header",
   data() {
     return {
-      username: "jack",
       phoneList: []
     };
   },
@@ -90,16 +136,36 @@ export default {
     }
   },
   methods: {
+    login() {
+      this.$router.push("/login");
+    },
     getProductList() {
       this.axios
         .get("/products", {
           params: {
-            categoryId: "100012"
+            categoryId: "100012",
+            pageSize: 6
           }
         })
         .then(res => {
           this.phoneList = res.list;
         });
+    },
+    getCartCount() {
+      this.axios.get("/carts/products/sum").then((res = 0) => {
+        this.$store.dispatch("saveCartCount", res);
+      });
+    },
+    logout() {
+      this.axios.post("/user/logout").then(() => {
+        this.$message.success("退出成功");
+        this.$cookie.set("userId", "", { expires: "-1" });
+        this.$store.dispatch("saveUserName", "");
+        this.$store.dispatch("saveCartCount", "0");
+      });
+    },
+    goToCart() {
+      this.$router.push("/cart");
     }
   }
 };
@@ -124,9 +190,10 @@ export default {
       }
       .my-cart {
         width: 110px;
-        background-color: $colorA;
+        background-color: #f60;
         text-align: center;
-        color: #b0b0b0;
+        color: #fff;
+        margin-right: 0;
         .icon-cart {
           @include bgImg(16px, 12px, "/imgs/icon-cart-checked.png");
           margin-right: 4px;
